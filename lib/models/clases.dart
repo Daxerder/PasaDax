@@ -1,6 +1,3 @@
-import 'dart:io';
-import 'package:meta/meta.dart';
-
 class Tarjeta {
   int id;
   String tarjeta;

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:medio_pasaje/db/sqlite.dart';
 import 'package:medio_pasaje/models/clases.dart';
+import 'package:unicons/unicons.dart';
 
 void main() {
   runApp(const MyApp());
@@ -38,6 +40,8 @@ class _MyHomePageState extends State<MyHomePage> {
   Tarjeta carga = Tarjeta();
   Tarjeta carga2 = Tarjeta();
   List<Tarjeta> _tarjetas = [];
+  List colores = [Colors.green, Colors.amber];
+  int indice = 0;
 
   @override
   void initState() {
@@ -66,86 +70,30 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: colores[indice].shade100,
       appBar: AppBar(
-        title: Text(widget.title),
+        title: Text(_tarjetas[indice].tarjeta),
+        titleTextStyle: const TextStyle(fontSize: 30),
+        backgroundColor: colores[indice],
         centerTitle: true,
       ),
       body: (_tarjetas.isNotEmpty)
           ? Padding(
-              padding: const EdgeInsets.symmetric(vertical: 20),
-              child: ListView.builder(
-                physics: const NeverScrollableScrollPhysics(),
-                shrinkWrap: true,
-                itemCount: _tarjetas.length,
-                itemBuilder: (BuildContext context, int index) {
-                  Tarjeta tarj = _tarjetas[index];
-                  return Card(
-                    child: Slidable(
-                      key: const ValueKey(0),
-                      endActionPane:
-                          ActionPane(motion: const StretchMotion(), children: [
-                        SlidableAction(
-                            label: "Recargar",
-                            icon: Icons.monetization_on,
-                            backgroundColor: Colors.amber,
-                            onPressed: ((context) {
-                              setState(() {
-                                saldo.text = '';
-                              });
-                              alerta_recarga(tarj);
-                            })),
-                        SlidableAction(
-                            label: "Pasaje",
-                            icon: Icons.garage_outlined,
-                            backgroundColor: Colors.green,
-                            onPressed: ((context) {
-                              alerta_pasaje(tarj);
-                            }))
-                      ]),
-                      child: Column(children: [
-                        const SizedBox(height: 20),
-                        Row(
-                          children: [
-                            const SizedBox(width: 20),
-                            Expanded(
-                              child: Text(
-                                "Tarjeta: ",
-                                style: tamLetra,
-                              ),
-                            ),
-                            Expanded(
-                              flex: 2,
-                              child: Text(
-                                tarj.tarjeta,
-                                style: tamLetra,
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 10),
-                        Row(
-                          children: [
-                            const SizedBox(width: 20),
-                            Expanded(
-                              child: Text(
-                                "Saldo: ",
-                                style: tamLetra,
-                              ),
-                            ),
-                            Expanded(
-                              flex: 2,
-                              child: Text(
-                                tarj.saldo.toString(),
-                                style: tamLetra,
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 20),
-                      ]),
+              padding: const EdgeInsets.symmetric(vertical: 100),
+              child: Center(
+                child: Column(
+                  children: [
+                    const Text(
+                      "Saldo",
+                      style: TextStyle(fontSize: 40),
                     ),
-                  );
-                },
+                    Text(
+                      _tarjetas[indice].saldo.toString(),
+                      style:
+                          const TextStyle(fontSize: 90, color: Colors.black54),
+                    ),
+                  ],
+                ),
               ),
             )
           : MaterialButton(
@@ -154,6 +102,72 @@ class _MyHomePageState extends State<MyHomePage> {
                 _anadir();
               },
             ),
+      bottomNavigationBar: BottomAppBar(
+        color: colores[indice],
+        shape: const CircularNotchedRectangle(),
+        notchMargin: 6,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            Expanded(
+              child: IconButton(
+                onPressed: () {
+                  setState(() {
+                    indice = 0;
+                  });
+                },
+                icon: const Icon(
+                  Icons.train,
+                  color: Colors.white,
+                ),
+              ),
+            ),
+            Expanded(
+              child: IconButton(
+                onPressed: () {
+                  setState(() {
+                    indice = 1;
+                  });
+                },
+                icon: const Icon(
+                  UniconsLine.bus_alt,
+                  color: Colors.white,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+      floatingActionButton: SpeedDial(
+        activeBackgroundColor: colores[indice].shade300,
+        animatedIcon: AnimatedIcons.menu_close,
+        backgroundColor: colores[indice],
+        children: [
+          SpeedDialChild(
+            child: const Icon(
+              UniconsLine.dollar_alt,
+              color: Colors.white,
+            ),
+            backgroundColor: colores[indice],
+            onTap: () {
+              saldo.text = '';
+              alerta_recarga(_tarjetas[indice]);
+            },
+          ),
+          SpeedDialChild(
+            child: const Icon(
+              UniconsLine.ticket,
+              color: Colors.white,
+            ),
+            backgroundColor: colores[indice],
+            onTap: () {
+              saldo.text = '';
+              alerta_pasaje(_tarjetas[indice]);
+            },
+          ),
+        ],
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
     );
   }
 
@@ -163,18 +177,30 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Column(
           children: [
             TextFormField(
+              cursorColor: colores[indice],
               controller: saldo,
               keyboardType: TextInputType.number,
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
+                focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide(
+                    color: colores[indice],
+                  ),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderSide: BorderSide(
+                    color: colores[indice],
+                  ),
+                ),
                 labelText: 'Saldo Recargado',
+                labelStyle: TextStyle(color: colores[indice]),
               ),
             ),
             const SizedBox(height: 10),
             MaterialButton(
-              //color: Colors.deepPurple.shade300,
+              color: colores[indice].shade300,
               child: const Text(
                 "Recargar",
-                //style: TextStyle(color: Colors.white),
+                style: TextStyle(color: Colors.white),
               ),
               onPressed: () {
                 recarga(tarjeta, saldo.text);
@@ -195,27 +221,69 @@ class _MyHomePageState extends State<MyHomePage> {
   alerta_pasaje(Tarjeta tarjeta) {
     AlertDialog alerta = AlertDialog(
       content: SingleChildScrollView(
-        child: Column(
-          children: [
-            MaterialButton(
-              child: Text("Lun-Sab"),
-              color: Colors.blue,
-              onPressed: () {
-                pasaje(tarjeta, "0.75");
-                Navigator.of(context).pop();
-              },
-            ),
-            const SizedBox(height: 10),
-            MaterialButton(
-              child: Text("Dom"),
-              color: Colors.blue,
-              onPressed: () {
-                pasaje(tarjeta, "1.50");
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        ),
+        child: (indice == 0)
+            ? Column(
+                children: [
+                  MaterialButton(
+                    color: colores[indice],
+                    child: const Text(
+                      "Lun-Sab",
+                      style: TextStyle(color: Colors.white),
+                    ),
+                    onPressed: () {
+                      pasaje(tarjeta, "0.75");
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                  const SizedBox(height: 10),
+                  MaterialButton(
+                    color: colores[indice],
+                    child: const Text(
+                      "Dom",
+                      style: TextStyle(color: Colors.white),
+                    ),
+                    onPressed: () {
+                      pasaje(tarjeta, "1.50");
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ],
+              )
+            : Column(
+                children: [
+                  TextFormField(
+                    cursorColor: colores[indice],
+                    controller: saldo,
+                    keyboardType: TextInputType.number,
+                    decoration: InputDecoration(
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: colores[indice],
+                        ),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: colores[indice],
+                        ),
+                      ),
+                      labelText: 'Pasaje',
+                      labelStyle: TextStyle(color: colores[indice]),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  MaterialButton(
+                    color: colores[indice].shade300,
+                    child: const Text(
+                      "Pasaje",
+                      style: TextStyle(color: Colors.white),
+                    ),
+                    onPressed: () {
+                      pasaje(tarjeta, saldo.text);
+                      Navigator.of(context).pop();
+                    },
+                  )
+                ],
+              ),
       ),
     );
     showDialog(
