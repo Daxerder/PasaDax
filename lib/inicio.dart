@@ -66,6 +66,7 @@ class _InicioState extends State<Inicio> {
 
   @override
   Widget build(BuildContext context) {
+    bool showFab = MediaQuery.of(context).viewInsets.bottom == 0.0;
     return Scaffold(
       backgroundColor: colores[indice].shade100,
       appBar: AppBar(
@@ -78,7 +79,7 @@ class _InicioState extends State<Inicio> {
       ),
       body: (_tarjetas.isNotEmpty)
           ? Padding(
-              padding: const EdgeInsets.only(top: 20, bottom: 30),
+              padding: const EdgeInsets.only(top: 20),
               child: Column(
                 mainAxisSize: MainAxisSize.max,
                 children: [
@@ -114,71 +115,87 @@ class _InicioState extends State<Inicio> {
                 },
               ),
             ),
-      bottomNavigationBar: BottomAppBar(
-        color: colores[indice],
-        shape: const CircularNotchedRectangle(),
-        notchMargin: 6,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            Expanded(
-              child: IconButton(
-                onPressed: () {
-                  setState(() {
-                    indice = 0;
-                  });
-                },
-                icon: const Icon(
-                  Icons.train,
-                  color: Colors.white,
+      bottomNavigationBar: Container(
+        decoration: const BoxDecoration(
+          borderRadius: BorderRadius.only(
+            topRight: Radius.circular(100),
+            topLeft: Radius.circular(100),
+          ),
+        ),
+        child: ClipRRect(
+          borderRadius: const BorderRadius.only(
+            topLeft: Radius.circular(100.0),
+            topRight: Radius.circular(100.0),
+          ),
+          child: BottomAppBar(
+            color: colores[indice],
+            shape: const CircularNotchedRectangle(),
+            notchMargin: 6,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Expanded(
+                  child: IconButton(
+                    onPressed: () {
+                      setState(() {
+                        indice = 0;
+                      });
+                    },
+                    icon: const Icon(
+                      Icons.train,
+                      color: Colors.white,
+                    ),
+                  ),
                 ),
-              ),
-            ),
-            Expanded(
-              child: IconButton(
-                onPressed: () {
-                  setState(() {
-                    indice = 1;
-                  });
-                },
-                icon: const Icon(
-                  UniconsLine.bus_alt,
-                  color: Colors.white,
+                Expanded(
+                  child: IconButton(
+                    onPressed: () {
+                      setState(() {
+                        indice = 1;
+                      });
+                    },
+                    icon: const Icon(
+                      UniconsLine.bus_alt,
+                      color: Colors.white,
+                    ),
+                  ),
                 ),
-              ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
-      floatingActionButton: SpeedDial(
-        activeBackgroundColor: colores[indice].shade300,
-        animatedIcon: AnimatedIcons.menu_close,
-        backgroundColor: colores[indice],
-        children: [
-          SpeedDialChild(
-            child: const Icon(
-              UniconsLine.dollar_alt,
-              color: Colors.white,
-            ),
-            backgroundColor: colores[indice],
-            onTap: () {
-              saldo.text = '';
-              alerta_recarga(_tarjetas[indice]);
-            },
-          ),
-          SpeedDialChild(
-            child: const Icon(
-              UniconsLine.ticket,
-              color: Colors.white,
-            ),
-            backgroundColor: colores[indice],
-            onTap: () {
-              saldo.text = '';
-              alerta_pasaje(_tarjetas[indice]);
-            },
-          ),
-        ],
-      ),
+      floatingActionButton: showFab
+          ? SpeedDial(
+              activeBackgroundColor: colores[indice].shade300,
+              animatedIcon: AnimatedIcons.menu_close,
+              backgroundColor: colores[indice],
+              children: [
+                SpeedDialChild(
+                  child: const Icon(
+                    UniconsLine.dollar_alt,
+                    color: Colors.white,
+                  ),
+                  backgroundColor: colores[indice],
+                  onTap: () {
+                    saldo.text = '';
+                    alerta_recarga(_tarjetas[indice]);
+                  },
+                ),
+                SpeedDialChild(
+                  child: const Icon(
+                    UniconsLine.ticket,
+                    color: Colors.white,
+                  ),
+                  backgroundColor: colores[indice],
+                  onTap: () {
+                    saldo.text = '';
+                    alerta_pasaje(_tarjetas[indice]);
+                  },
+                ),
+              ],
+            )
+          : null,
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
     );
   }
