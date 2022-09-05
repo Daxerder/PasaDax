@@ -1,31 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:medio_pasaje/inicio.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_speed_dial/flutter_speed_dial.dart';
+import 'package:medio_pasaje/db/sqlite.dart';
+import 'package:medio_pasaje/models/clases.dart';
+import 'package:unicons/unicons.dart';
 
-void main() {
-  runApp(const MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      routes: <String, WidgetBuilder>{
-        Inicio.ruta: (BuildContext context) => Inicio(),
-      },
-      initialRoute: "/inicio",
-    );
-  }
-}
-
-/*class MyHomePage extends StatefulWidget {
-  const MyHomePage({Key? key}) : super(key: key);
+class Inicio extends StatefulWidget {
+  static const String ruta = "/inicio";
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  State<Inicio> createState() => _InicioState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _InicioState extends State<Inicio> {
   TextEditingController saldo = TextEditingController();
 
   int _counter = 0;
@@ -39,9 +26,9 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   void initState() {
-    /*_loadSaldo();
+    _loadSaldo();
     _loadMovimientoTren();
-    _loadMovimientoMetro();*/
+    _loadMovimientoMetro();
     super.initState();
   }
 
@@ -82,12 +69,14 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       backgroundColor: colores[indice].shade100,
       appBar: AppBar(
-        title: Text(_tarjetas[indice].tarjeta),
+        title: (indice == 0)
+            ? const Text("Tren Electrico")
+            : const Text("Metropolitano"),
         titleTextStyle: const TextStyle(fontSize: 30),
         backgroundColor: colores[indice],
         centerTitle: true,
       ),
-      body: (false)
+      body: (_tarjetas.isNotEmpty)
           ? Padding(
               padding: const EdgeInsets.only(top: 20, bottom: 30),
               child: Column(
@@ -101,7 +90,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     ),
                   ),
                   Text(
-                    "_tarjetas[indice].saldo.toStringAsFixed(2)",
+                    _tarjetas[indice].saldo.toStringAsFixed(2),
                     style: const TextStyle(fontSize: 90, color: Colors.black54),
                   ),
                   const SizedBox(
@@ -174,7 +163,7 @@ class _MyHomePageState extends State<MyHomePage> {
             backgroundColor: colores[indice],
             onTap: () {
               saldo.text = '';
-              //alerta_recarga(_tarjetas[indice]);
+              alerta_recarga(_tarjetas[indice]);
             },
           ),
           SpeedDialChild(
@@ -185,7 +174,7 @@ class _MyHomePageState extends State<MyHomePage> {
             backgroundColor: colores[indice],
             onTap: () {
               saldo.text = '';
-              //alerta_pasaje(_tarjetas[indice]);
+              alerta_pasaje(_tarjetas[indice]);
             },
           ),
         ],
@@ -414,4 +403,4 @@ class _MyHomePageState extends State<MyHomePage> {
       _loadMovimientoMetro();
     }
   }
-}*/
+}

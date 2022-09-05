@@ -56,3 +56,107 @@ class DB {
     return resp;
   }
 }
+
+class MovimientoDBTren {
+  static Database? _database;
+  static final MovimientoDBTren db = MovimientoDBTren._();
+
+  MovimientoDBTren._();
+
+  Future<Database?> get database async {
+    if (_database != null) return _database;
+
+    _database = await initDB();
+    return _database;
+  }
+
+  Future<Database?> initDB() async {
+    Directory documento = await getApplicationDocumentsDirectory();
+    final path = join(documento.path, 'Tren.db');
+
+    return await openDatabase(path, version: 1, onOpen: (db) {},
+        onCreate: (Database db, int version) async {
+      await db.execute(''' CREATE TABLE Movimiento(
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            opcion TEXT,
+            monto REAL
+          )''');
+    });
+  }
+
+  Future<int?> nuevo(Movimiento movimiento) async {
+    final db = await database;
+    final resp = await db?.insert('Movimiento', movimiento.toJson());
+    return resp;
+  }
+
+  Future<List<Movimiento>> getMovimiento() async {
+    final db = await database;
+    final resp = await db?.query('Movimiento');
+    List<Movimiento> lista = resp!.map((e) => Movimiento.fromJson(e)).toList();
+
+    if (lista.isNotEmpty) {
+      return lista;
+    } else {
+      return [];
+    }
+  }
+
+  Future<int?> eliminar(int id) async {
+    final db = await database;
+    final resp = await db?.delete('Movimiento', where: 'id=?', whereArgs: [id]);
+    return resp;
+  }
+}
+
+class MovimientoDBMetro {
+  static Database? _database;
+  static final MovimientoDBMetro db = MovimientoDBMetro._();
+
+  MovimientoDBMetro._();
+
+  Future<Database?> get database async {
+    if (_database != null) return _database;
+
+    _database = await initDB();
+    return _database;
+  }
+
+  Future<Database?> initDB() async {
+    Directory documento = await getApplicationDocumentsDirectory();
+    final path = join(documento.path, 'Metropolitano.db');
+
+    return await openDatabase(path, version: 1, onOpen: (db) {},
+        onCreate: (Database db, int version) async {
+      await db.execute(''' CREATE TABLE Movimiento(
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            opcion TEXT,
+            monto REAL
+          )''');
+    });
+  }
+
+  Future<int?> nuevo(Movimiento movimiento) async {
+    final db = await database;
+    final resp = await db?.insert('Movimiento', movimiento.toJson());
+    return resp;
+  }
+
+  Future<List<Movimiento>> getMovimiento() async {
+    final db = await database;
+    final resp = await db?.query('Movimiento');
+    List<Movimiento> lista = resp!.map((e) => Movimiento.fromJson(e)).toList();
+
+    if (lista.isNotEmpty) {
+      return lista;
+    } else {
+      return [];
+    }
+  }
+
+  Future<int?> eliminar(int id) async {
+    final db = await database;
+    final resp = await db?.delete('Movimiento', where: 'id=?', whereArgs: [id]);
+    return resp;
+  }
+}

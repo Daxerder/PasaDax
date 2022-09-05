@@ -20,3 +20,26 @@ class Tarjeta {
         "saldo": saldo,
       };
 }
+
+class Movimiento {
+  int id;
+  String opcion;
+  double monto;
+
+  Movimiento({
+    this.id = 0,
+    this.opcion = '',
+    this.monto = 0.0, //@required
+  });
+
+  factory Movimiento.fromJson(Map<String, dynamic> json) => Movimiento(
+        id: json['id'],
+        opcion: json['opcion'],
+        monto: json['monto'],
+      );
+
+  Map<String, dynamic> toJson() => {
+        "opcion": opcion,
+        "monto": monto,
+      };
+}
