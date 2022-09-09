@@ -80,43 +80,48 @@ class _InicioState extends State<Inicio> {
       ),
       drawer: Drawer(
         backgroundColor: Colors.white,
-        child: ListView(children: [
-          ListTile(
-            leading: Icon(
-              Icons.arrow_back,
-              color: colores[indice],
-            ),
-            onTap: () {
-              Navigator.of(context).pop();
-            },
-          ),
-          ListTile(
-            leading: Icon(
-              Icons.train_outlined,
-              color: colores[0],
-            ),
-            title: const Text("Tren Electrico"),
-            onTap: () {
-              setState(() {
-                indice = 0;
+        child: ListView(
+          children: [
+            ListTile(
+              leading: Icon(
+                Icons.arrow_back,
+                color: colores[indice],
+              ),
+              trailing: const Text("By Daxerder",
+                  style: TextStyle(
+                      fontStyle: FontStyle.italic, color: Colors.black26)),
+              onTap: () {
                 Navigator.of(context).pop();
-              });
-            },
-          ),
-          ListTile(
-            leading: Icon(
-              UniconsLine.bus,
-              color: colores[1],
+              },
             ),
-            title: const Text("Metropolitano"),
-            onTap: () {
-              setState(() {
-                indice = 1;
-                Navigator.of(context).pop();
-              });
-            },
-          ),
-        ]),
+            ListTile(
+              leading: Icon(
+                Icons.train_outlined,
+                color: colores[0],
+              ),
+              title: const Text("Tren Electrico"),
+              onTap: () {
+                setState(() {
+                  indice = 0;
+                  Navigator.of(context).pop();
+                });
+              },
+            ),
+            ListTile(
+              leading: Icon(
+                UniconsLine.bus,
+                color: colores[1],
+              ),
+              title: const Text("Metropolitano"),
+              onTap: () {
+                setState(() {
+                  indice = 1;
+                  Navigator.of(context).pop();
+                });
+              },
+            ),
+          ],
+        ),
       ),
       body: (_tarjetas.isNotEmpty)
           ? Padding(
