@@ -23,6 +23,7 @@ class _InicioState extends State<Inicio> {
   List<Movimiento> _movimientoTren = [], _movimientoMetro = [];
   List colores = [Colors.green, Colors.amber];
   int indice = 0;
+  bool mostrar = false;
 
   @override
   void initState() {
@@ -68,7 +69,7 @@ class _InicioState extends State<Inicio> {
   Widget build(BuildContext context) {
     bool showFab = MediaQuery.of(context).viewInsets.bottom == 0.0;
     return Scaffold(
-      backgroundColor: colores[indice].shade100,
+      backgroundColor: const Color.fromARGB(250, 255, 255, 255),
       appBar: AppBar(
         title: (indice == 0)
             ? const Text("Tren Electrico")
@@ -77,25 +78,129 @@ class _InicioState extends State<Inicio> {
         backgroundColor: colores[indice],
         centerTitle: true,
       ),
+      drawer: Drawer(
+        backgroundColor: Colors.white,
+        child: ListView(children: [
+          ListTile(
+            leading: Icon(
+              Icons.arrow_back,
+              color: colores[indice],
+            ),
+            onTap: () {
+              Navigator.of(context).pop();
+            },
+          ),
+          ListTile(
+            leading: Icon(
+              Icons.train_outlined,
+              color: colores[0],
+            ),
+            title: const Text("Tren Electrico"),
+            onTap: () {
+              setState(() {
+                indice = 0;
+                Navigator.of(context).pop();
+              });
+            },
+          ),
+          ListTile(
+            leading: Icon(
+              UniconsLine.bus,
+              color: colores[1],
+            ),
+            title: const Text("Metropolitano"),
+            onTap: () {
+              setState(() {
+                indice = 1;
+                Navigator.of(context).pop();
+              });
+            },
+          ),
+        ]),
+      ),
       body: (_tarjetas.isNotEmpty)
           ? Padding(
-              padding: const EdgeInsets.only(top: 20),
+              padding: const EdgeInsets.only(top: 20, right: 10, left: 10),
               child: Column(
                 mainAxisSize: MainAxisSize.max,
                 children: [
-                  const Align(
+                  Align(
                     alignment: Alignment.center,
-                    child: Text(
-                      "Saldo",
-                      style: TextStyle(fontSize: 40),
+                    child: Column(
+                      children: [
+                        Card(
+                          color: const Color.fromARGB(240, 255, 255, 255),
+                          margin: const EdgeInsets.symmetric(horizontal: 5),
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 10, horizontal: 10),
+                            child: InkWell(
+                              onTap: () {
+                                setState(() {
+                                  mostrar = !mostrar;
+                                });
+                              },
+                              child: Row(
+                                children: [
+                                  Expanded(
+                                    child: (mostrar)
+                                        ? Row(
+                                            children: [
+                                              Icon(
+                                                UniconsLine.eye_slash,
+                                                color: colores[indice],
+                                              ),
+                                              const SizedBox(width: 5),
+                                              Text(
+                                                "Ocultar Saldo",
+                                                style: TextStyle(
+                                                    color: colores[indice]),
+                                              ),
+                                            ],
+                                          )
+                                        : Row(
+                                            children: [
+                                              Icon(
+                                                UniconsLine.eye,
+                                                color: colores[indice],
+                                              ),
+                                              const SizedBox(width: 5),
+                                              Text(
+                                                "Mostrar Saldo",
+                                                style: TextStyle(
+                                                    color: colores[indice]),
+                                              ),
+                                            ],
+                                          ),
+                                  ),
+                                  Container(
+                                    child: (mostrar)
+                                        ? Text(
+                                            "S/. ${_tarjetas[indice].saldo.toStringAsFixed(2)}")
+                                        : null,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                  Text(
-                    _tarjetas[indice].saldo.toStringAsFixed(2),
-                    style: const TextStyle(fontSize: 90, color: Colors.black54),
-                  ),
-                  const SizedBox(
-                    height: 20,
+                  Container(
+                    decoration: const BoxDecoration(
+                        border: Border(
+                            bottom:
+                                BorderSide(width: 1.0, color: Colors.black12))),
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 15, horizontal: 10),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text("Ultimos Movimientos",
+                            style: TextStyle(color: colores[indice]))
+                      ],
+                    ),
                   ),
                   (indice == 0)
                       ? Expanded(
@@ -104,99 +209,82 @@ class _InicioState extends State<Inicio> {
                       : Expanded(
                           child: Movimientos(_movimientoMetro),
                         ),
+                  Align(
+                    alignment: Alignment.bottomCenter,
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Padding(
+                            padding: const EdgeInsets.only(right: 5),
+                            child: MaterialButton(
+                              shape: RoundedRectangleBorder(
+                                  side: BorderSide(color: colores[indice]),
+                                  borderRadius: BorderRadius.circular(10)),
+                              onPressed: () {
+                                alerta_pasaje(_tarjetas[indice]);
+                              },
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(
+                                    UniconsLine.ticket,
+                                    color: colores[indice],
+                                  ),
+                                  const SizedBox(width: 5),
+                                  Text(
+                                    "Pasaje",
+                                    style: TextStyle(color: colores[indice]),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          child: Padding(
+                            padding: const EdgeInsets.only(left: 5),
+                            child: MaterialButton(
+                              color: colores[indice],
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10)),
+                              onPressed: () {
+                                alerta_recarga(_tarjetas[indice]);
+                              },
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: const <Widget>[
+                                  Icon(
+                                    Icons.monetization_on,
+                                    color: Colors.white,
+                                  ),
+                                  SizedBox(width: 5),
+                                  Text(
+                                    "Recargar",
+                                    style: TextStyle(color: Colors.white),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 ],
               ),
             )
           : Center(
               child: MaterialButton(
-                child: const Text("añadir Tarjetas"),
+                color: colores[indice],
+                child: const Text(
+                  "añadir Tarjetas",
+                  style: TextStyle(color: Colors.white),
+                ),
                 onPressed: () {
                   _anadir();
                 },
               ),
             ),
-      bottomNavigationBar: Container(
-        decoration: const BoxDecoration(
-          borderRadius: BorderRadius.only(
-            topRight: Radius.circular(100),
-            topLeft: Radius.circular(100),
-          ),
-        ),
-        child: ClipRRect(
-          borderRadius: const BorderRadius.only(
-            topLeft: Radius.circular(100.0),
-            topRight: Radius.circular(100.0),
-          ),
-          child: BottomAppBar(
-            color: colores[indice],
-            shape: const CircularNotchedRectangle(),
-            notchMargin: 6,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                Expanded(
-                  child: IconButton(
-                    onPressed: () {
-                      setState(() {
-                        indice = 0;
-                      });
-                    },
-                    icon: const Icon(
-                      Icons.train,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
-                Expanded(
-                  child: IconButton(
-                    onPressed: () {
-                      setState(() {
-                        indice = 1;
-                      });
-                    },
-                    icon: const Icon(
-                      UniconsLine.bus_alt,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-      floatingActionButton: showFab
-          ? SpeedDial(
-              activeBackgroundColor: colores[indice].shade300,
-              animatedIcon: AnimatedIcons.menu_close,
-              backgroundColor: colores[indice],
-              children: [
-                SpeedDialChild(
-                  child: const Icon(
-                    UniconsLine.dollar_alt,
-                    color: Colors.white,
-                  ),
-                  backgroundColor: colores[indice],
-                  onTap: () {
-                    saldo.text = '';
-                    alerta_recarga(_tarjetas[indice]);
-                  },
-                ),
-                SpeedDialChild(
-                  child: const Icon(
-                    UniconsLine.ticket,
-                    color: Colors.white,
-                  ),
-                  backgroundColor: colores[indice],
-                  onTap: () {
-                    saldo.text = '';
-                    alerta_pasaje(_tarjetas[indice]);
-                  },
-                ),
-              ],
-            )
-          : null,
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
     );
   }
 
@@ -209,18 +297,40 @@ class _InicioState extends State<Inicio> {
           int cont = lista.length - 1 - index;
           Movimiento mov = lista[cont];
           return Container(
-            decoration: BoxDecoration(
-                color:
-                    (mov.opcion == 'Recarga') ? colores[indice] : Colors.red),
-            padding: const EdgeInsets.symmetric(vertical: 10),
+            decoration: const BoxDecoration(
+                border: Border(
+                    bottom: BorderSide(width: 1.0, color: Colors.black12))
+                /*color:
+                    (mov.opcion == 'Recarga') ? colores[indice] : Colors.red*/
+                ),
+            //margin: const EdgeInsets.symmetric(vertical: 10),
+            padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 10),
             child: Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    mov.opcion,
+                    style: const TextStyle(fontSize: 15),
+                  ),
+                ),
+                Text(
+                  (mov.opcion == 'Recarga')
+                      ? " S/. ${mov.monto.toStringAsFixed(2)}"
+                      : "- S/. ${mov.monto.toStringAsFixed(2)}",
+                  style: TextStyle(
+                      fontSize: 15,
+                      color: (mov.opcion == 'Recarga') ? null : Colors.red),
+                ),
+              ],
+            ),
+            /*Row(
               children: [
                 Expanded(
                   child: Align(
                     alignment: Alignment.center,
                     child: Text(
                       mov.opcion,
-                      style: const TextStyle(fontSize: 20, color: Colors.white),
+                      style: const TextStyle(fontSize: 20),
                     ),
                   ),
                 ),
@@ -234,7 +344,7 @@ class _InicioState extends State<Inicio> {
                   ),
                 ),
               ],
-            ),
+            ),*/
           );
         },
       );
@@ -380,7 +490,7 @@ class _InicioState extends State<Inicio> {
     _loadSaldo();
     Movimiento mov = Movimiento();
     mov.opcion = 'Pasaje';
-    mov.monto = double.parse(pasaje) * (-1);
+    mov.monto = double.parse(pasaje);
     if (indice == 0) {
       if (_movimientoTren.length == 10) {
         await MovimientoDBTren.db.eliminar(_movimientoTren[0].id);
